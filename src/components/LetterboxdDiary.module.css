@@ -1,0 +1,243 @@
+.wrapper {
+  background: #181c21;
+  border: 1px solid #273038;
+  border-radius: 8px;
+  overflow: hidden;
+  font-family: inherit;
+  container-type: inline-size;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #273038;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #eee;
+  flex-wrap: wrap;
+}
+
+.header a {
+  display: inline-flex;
+  align-items: center;
+}
+
+.logoImg {
+  /* 1.5em makes the text inside the SVG approximately match the surrounding text */
+  height: 2em;
+  vertical-align: middle;
+}
+
+/*
+  All layout containers have horizontal padding so that card borders
+  appear inset ("floating") from the outer container edges.
+  Only the header and footer borders span the full container width.
+*/
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 160px));
+  justify-content: space-around;
+  row-gap: 1.5rem;
+  padding: 1rem;
+}
+
+@container (max-width: 700px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 160px));
+  }
+}
+
+@container (max-width: 540px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 160px));
+  }
+}
+
+@container (max-width: 370px) {
+  .grid {
+    grid-template-columns: minmax(0, 160px);
+    justify-content: center;
+  }
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+}
+
+/* List cards go full-width and stack horizontally (poster + body side by side) */
+.list > * {
+  width: 100% !important;
+  flex-direction: row !important;
+  gap: 0.5rem;
+  border-bottom: 1px solid #273038;
+  padding-bottom: 0.75rem;
+}
+
+.list > *:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.list > * .poster {
+  flex-shrink: 0;
+}
+
+.list > * .body {
+  flex: 1;
+}
+
+/* On mobile, shrink the list poster to leave more room for the text body */
+@media (max-width: 480px) {
+  .list > * {
+    --poster-width: 110px;
+    --poster-height: 165px;
+  }
+
+  .list .skeletonPoster {
+    width: 110px;
+    height: 165px;
+  }
+}
+
+/* Carousel */
+.carouselWrapper {
+  padding: 0.75rem 1rem;
+}
+
+.carouselTrack {
+  display: grid;
+  /* grid-template-columns set via inline style (responsive via JS) */
+  gap: 1rem;
+  justify-items: center;
+}
+
+.carouselHeaderNav {
+  display: flex;
+  gap: 0.4rem;
+  margin-left: auto;
+  align-items: center;
+}
+
+.navButton {
+  background: none;
+  border: 1px solid #273038;
+  color: #eee;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.navButton:hover:not(:disabled) {
+  border-color: #40bcf4;
+  color: #40bcf4;
+}
+
+.navButton:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* Skeleton */
+.skeleton {
+  width: 160px;
+  background: #181c21;
+}
+
+.skeletonPoster {
+  width: 160px;
+  height: 240px;
+  background: linear-gradient(90deg, #1e2329 25%, #273038 50%, #1e2329 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+.skeletonBody {
+  padding: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.skeletonLine {
+  height: 9px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #1e2329 25%, #273038 50%, #1e2329 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+.skeletonLine.short {
+  width: 55%;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Error / empty states */
+.error,
+.empty {
+  padding: 2rem;
+  text-align: center;
+  color: #667;
+  font-size: 0.85rem;
+}
+
+.setupLink {
+  display: inline-block;
+  margin-top: 0.5rem;
+  color: #40bcf4;
+  font-size: 0.82rem;
+  text-decoration: none;
+}
+
+.setupLink:hover {
+  text-decoration: underline;
+}
+
+.retryButton {
+  margin-top: 0.75rem;
+  background: none;
+  border: 1px solid #40bcf4;
+  color: #40bcf4;
+  padding: 0.35rem 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.78rem;
+}
+
+.retryButton:hover {
+  background: #40bcf4;
+  color: #000;
+}
+
+/* Footer */
+.footer {
+  padding: 0.6rem 1rem;
+  border-top: 1px solid #273038;
+  font-size: 0.72rem;
+  color: #667;
+}
+
+.footer a {
+  color: #40bcf4;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
