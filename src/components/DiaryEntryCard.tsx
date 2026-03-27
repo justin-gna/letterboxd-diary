@@ -82,27 +82,10 @@ export function DiaryEntryCard({ entry, showReview = true, layout }: DiaryEntryC
     [reviewHtml]
   );
 
-  const reviewRef = useRef<HTMLDivElement>(null);
-  const [isClamped, setIsClamped] = useState(false);
-
-  useEffect(() => {
-    const el = reviewRef.current;
-    if (!el) return;
-    const check = () => setIsClamped(el.scrollHeight > el.clientHeight);
-    check();
-    const observer = new ResizeObserver(check);
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [reviewHtml]);
-
   const bodyRef = useRef<HTMLDivElement>(null);
   const [isBodyOverflowing, setIsBodyOverflowing] = useState(false);
 
   useEffect(() => {
-    if (layout !== "list") {
-      setIsBodyOverflowing(false);
-      return;
-    }
     const el = bodyRef.current;
     if (!el) return;
     const check = () => setIsBodyOverflowing(el.scrollHeight > el.clientHeight);
@@ -110,7 +93,7 @@ export function DiaryEntryCard({ entry, showReview = true, layout }: DiaryEntryC
     const observer = new ResizeObserver(check);
     observer.observe(el);
     return () => observer.disconnect();
-  }, [layout]);
+  }, [layout, reviewHtml]);
 
   const posterSrcSet = film.tmdbId && film.posterLarge
     ? [
@@ -143,8 +126,8 @@ export function DiaryEntryCard({ entry, showReview = true, layout }: DiaryEntryC
         )}
       </a>
 
-      <div ref={bodyRef} className={layout === "list" ? `${styles.body} ${styles.bodyList}` : styles.body}>
-        <div className={styles.titleRow}>
+      <div ref={bodyRef} className={`${styles.body} ${styles.bodyConstrained} ${layout === "list" ? styles.bodyList : styles.bodyGrid}`}>
+        <div>
           <span className={styles.title}>{film.title}</span>
           {film.year && <>{" "}<span className={styles.year}>{film.year}</span></>}
         </div>
@@ -159,33 +142,22 @@ export function DiaryEntryCard({ entry, showReview = true, layout }: DiaryEntryC
         </span>
 
         {hasReview && (
-          <>
-            <div
-              ref={reviewRef}
-              className={styles.review}
-              dangerouslySetInnerHTML={{ __html: cleanHtml }}
-            />
-            {isClamped && (
-              <a
-                href={entry.entryUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.readMore}
-              >
-                [read more on letterboxd]
-              </a>
-            )}
-          </>
+          <div
+            className={styles.review}
+            dangerouslySetInnerHTML={{ __html: cleanHtml }}
+          />
         )}
-        {isBodyOverflowing && (
-          <a
-            href={entry.entryUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.listOverflowReadMore}
-          >
-            read more on letterboxd
-          </a>
+        {isBodyOverflowing && hasReview && (
+          <div className={styles.overflowFade}>
+            <a
+              href={entry.entryUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.overflowReadMore}
+            >
+              read more
+            </a>
+          </div>
         )}
       </div>
     </div>

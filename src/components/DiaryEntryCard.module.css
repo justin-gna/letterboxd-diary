@@ -41,9 +41,9 @@
   flex: 1;
 }
 
-.titleRow {
-  /* inline flow: title and year share the same text stream so the year
-     always appears on the same line as the title's last word */
+.bodyConstrained {
+  overflow: hidden;
+  position: relative;
 }
 
 .title {
@@ -77,15 +77,12 @@
   font-size: 0.8rem;
   color: #eee;
   line-height: 1.5;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 5;
-  line-clamp: 5;
-  -webkit-box-orient: vertical;
 }
 
 .review p {
   margin: 0 0 0.3em;
+  font-size: inherit;
+  font-weight: inherit;
 }
 
 .review p:last-child {
@@ -99,41 +96,35 @@
   color: #aab;
 }
 
-/* List view: constrain body to poster height, clip overflow */
+/* List view: constrain body to poster height */
 .bodyList {
   max-height: var(--poster-height, 240px);
-  overflow: hidden;
-  position: relative;
 }
 
-/* Gradient fade + "read more" link anchored to the bottom of the body
-   when its content overflows the poster height */
-.listOverflowReadMore {
+/* Grid / Carousel view: fixed body height */
+.bodyGrid {
+  max-height: var(--card-body-max-height, 180px);
+}
+
+/* Gradient fade anchored to the bottom of the body — non-interactive */
+.overflowFade {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   padding: 2rem 0.6rem 0.5rem;
   background: linear-gradient(transparent, #181c21 50%);
+  pointer-events: none;
+}
+
+/* Only the text itself is the link */
+.overflowReadMore {
   font-size: 0.75rem;
   color: #40bcf4;
   text-decoration: none;
-  display: block;
+  pointer-events: auto;
 }
 
-.listOverflowReadMore:hover {
-  text-decoration: underline;
-}
-
-.readMore {
-  display: inline-block;
-  align-self: flex-start;
-  margin-top: 0.25rem;
-  font-size: 0.75rem;
-  color: #40bcf4;
-  text-decoration: none;
-}
-
-.readMore:hover {
+.overflowReadMore:hover {
   text-decoration: underline;
 }

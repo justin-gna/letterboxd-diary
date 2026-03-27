@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { DiaryEntryCard } from "../../components/DiaryEntryCard";
 import { makeEntry } from "../fixtures";
@@ -84,7 +84,79 @@ describe("DiaryEntryCard", () => {
     it("does not render review when reviewHtml is empty even if showReview=true", () => {
       render(<DiaryEntryCard entry={makeEntry({ reviewHtml: "" })} showReview={true} />);
       // No review div rendered — nothing to assert other than no crash
-      expect(screen.queryByText("[read more on letterboxd]")).not.toBeInTheDocument();
+      expect(screen.queryByText("read more")).not.toBeInTheDocument();
+    });
+  });
+
+  describe("overflow / read more", () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    function mockOverflow() {
+      vi.spyOn(HTMLElement.prototype, "scrollHeight", "get").mockReturnValue(500);
+      vi.spyOn(HTMLElement.prototype, "clientHeight", "get").mockReturnValue(180);
+    }
+
+    it("shows 'read more' when body overflows in list layout", () => {
+      mockOverflow();
+      render(
+        <DiaryEntryCard
+          entry={makeEntry({ reviewHtml: "<p>A very long review.</p>" })}
+          layout="list"
+        />
+      );
+      const link = screen.getByText("read more");
+      expect(link).toBeInTheDocument();
+      expect(link.closest("a")).toHaveAttribute("href", "https://letterboxd.com/user/film/mulholland-drive/1");
+    });
+
+    it("shows 'read more' when body overflows in grid layout", () => {
+      mockOverflow();
+      render(
+        <DiaryEntryCard
+          entry={makeEntry({ reviewHtml: "<p>A very long review.</p>" })}
+          layout="grid"
+        />
+      );
+      const link = screen.getByText("read more");
+      expect(link).toBeInTheDocument();
+      expect(link.closest("a")).toHaveAttribute("href", "https://letterboxd.com/user/film/mulholland-drive/1");
+    });
+
+    it("shows 'read more' when body overflows in carousel layout", () => {
+      mockOverflow();
+      render(
+        <DiaryEntryCard
+          entry={makeEntry({ reviewHtml: "<p>A very long review.</p>" })}
+          layout="carousel"
+        />
+      );
+      const link = screen.getByText("read more");
+      expect(link).toBeInTheDocument();
+      expect(link.closest("a")).toHaveAttribute("href", "https://letterboxd.com/user/film/mulholland-drive/1");
+    });
+
+    it("does not show 'read more' when content fits within the body", () => {
+      render(
+        <DiaryEntryCard
+          entry={makeEntry({ reviewHtml: "<p>Short.</p>" })}
+          layout="grid"
+        />
+      );
+      expect(screen.queryByText("read more")).not.toBeInTheDocument();
+    });
+
+    it("link text is exactly 'read more', not 'read more on letterboxd'", () => {
+      mockOverflow();
+      render(
+        <DiaryEntryCard
+          entry={makeEntry({ reviewHtml: "<p>A very long review.</p>" })}
+          layout="grid"
+        />
+      );
+      expect(screen.getByText("read more")).toBeInTheDocument();
+      expect(screen.queryByText(/read more on letterboxd/i)).not.toBeInTheDocument();
     });
   });
 
@@ -95,10 +167,7 @@ describe("DiaryEntryCard", () => {
     });
 
     it("does not render an img when no poster is available", () => {
-      const entry = makeEntry();
-      entry.film.posterSmall = null;
-      entry.film.posterLarge = null;
-      render(<DiaryEntryCard entry={entry} />);
+      render(<DiaryEntryCard entry={makeEntry({ film: { ...makeEntry().film, posterSmall: null, posterLarge: null } })} />);
       expect(screen.queryByAltText(/Poster for/)).not.toBeInTheDocument();
     });
   });
