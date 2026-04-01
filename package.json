@@ -1,6 +1,6 @@
 {
   "name": "letterboxd-diary",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A self-hosted Letterboxd diary widget for React. Displays recently watched films as a grid, list, or carousel via a Cloudflare Worker backend.",
   "keywords": [
     "letterboxd",
